@@ -51,7 +51,7 @@ public class RNPushNotification extends ReactContextBaseJavaModule {
         Activity activity = getCurrentActivity();
 
         if (activity != null) {
-            Intent intent = mActivity.getIntent();
+            Intent intent = activity.getIntent();
 
             Bundle bundle = intent.getBundleExtra("notification");
             if (bundle != null) {
