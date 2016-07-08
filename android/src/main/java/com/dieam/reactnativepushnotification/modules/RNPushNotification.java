@@ -1,6 +1,7 @@
 package com.dieam.reactnativepushnotification.modules;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -25,15 +26,15 @@ import android.content.Context;
 
 public class RNPushNotification extends ReactContextBaseJavaModule {
     private ReactContext mReactContext;
-    private Activity mActivity;
     private RNPushNotificationHelper mRNPushNotificationHelper;
+    private String gcmSenderId;
 
-    public RNPushNotification(ReactApplicationContext reactContext, Activity activity) {
+    public RNPushNotification(ReactApplicationContext reactContext, Application application, String gcmSenderId) {
         super(reactContext);
-
-        mActivity = activity;
         mReactContext = reactContext;
-        mRNPushNotificationHelper = new RNPushNotificationHelper(activity.getApplication(), reactContext);
+        this.gcmSenderId = gcmSenderId;
+
+        mRNPushNotificationHelper = new RNPushNotificationHelper(application, reactContext);
         registerNotificationsRegistration();
         registerNotificationsReceiveNotification();
     }
@@ -47,13 +48,17 @@ public class RNPushNotification extends ReactContextBaseJavaModule {
     public Map<String, Object> getConstants() {
         final Map<String, Object> constants = new HashMap<>();
 
-        Intent intent = mActivity.getIntent();
+        Activity activity = getCurrentActivity();
 
-        Bundle bundle = intent.getBundleExtra("notification");
-        if ( bundle != null ) {
-            bundle.putBoolean("foreground", false);
-            String bundleString = convertJSON(bundle);
-            constants.put("initialNotification", bundleString);
+        if (activity != null) {
+            Intent intent = mActivity.getIntent();
+
+            Bundle bundle = intent.getBundleExtra("notification");
+            if (bundle != null) {
+                bundle.putBoolean("foreground", false);
+                String bundleString = convertJSON(bundle);
+                constants.put("initialNotification", bundleString);
+            }
         }
 
         return constants;
@@ -128,10 +133,10 @@ public class RNPushNotification extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void requestPermissions(String senderID) {
+    public void requestPermissions() {
         Intent GCMService = new Intent(mReactContext, RNPushNotificationRegistrationService.class);
 
-        GCMService.putExtra("senderID", senderID);
+        GCMService.putExtra("senderID", gcmSenderId);
         mReactContext.startService(GCMService);
     }
 

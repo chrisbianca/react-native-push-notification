@@ -189,7 +189,7 @@ Notifications.requestPermissions = function() {
 	if ( Platform.OS === 'ios' ) {
 		return this.callNative( 'requestPermissions', [ this.permissions ]);
 	} else if ( typeof this.senderID !== 'undefined' ) {
-		return this.callNative( 'requestPermissions', [ this.senderID ]);
+		return this.callNative( 'requestPermissions');
 	}
 };
 
