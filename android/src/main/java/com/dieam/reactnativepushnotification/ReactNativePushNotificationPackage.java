@@ -15,15 +15,18 @@ import java.util.List;
 
 public class ReactNativePushNotificationPackage implements ReactPackage {
     RNPushNotification mRNPushNotification;
+    String gcmSenderId;
 
-    public ReactNativePushNotificationPackage() {}
+    public ReactNativePushNotificationPackage(String gcmSenderId) {
+        this.gcmSenderId = gcmSenderId;
+    }
 
     @Override
     public List<NativeModule> createNativeModules(
             ReactApplicationContext reactContext) {
         List<NativeModule> modules = new ArrayList<>();
 
-        mRNPushNotification = new RNPushNotification(reactContext);
+        mRNPushNotification = new RNPushNotification(reactContext, gcmSenderId);
 
         modules.add(mRNPushNotification);
         return modules;

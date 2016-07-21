@@ -29,12 +29,14 @@ import android.util.Log;
 public class RNPushNotification extends ReactContextBaseJavaModule {
     private ReactContext mReactContext;
     private RNPushNotificationHelper mRNPushNotificationHelper;
+    private String gcmSenderId;
 
-    public RNPushNotification(ReactApplicationContext reactContext) {
+    public RNPushNotification(ReactApplicationContext reactContext, String gcmSenderId) {
         super(reactContext);
 
         mReactContext = reactContext;
         mRNPushNotificationHelper = new RNPushNotificationHelper((Application) reactContext.getApplicationContext());
+        this.gcmSenderId = gcmSenderId;
         registerNotificationsRegistration();
         registerNotificationsReceiveNotification();
     }
@@ -120,10 +122,10 @@ public class RNPushNotification extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void requestPermissions(String senderID) {
+    public void requestPermissions() {
         Intent GCMService = new Intent(mReactContext, RNPushNotificationRegistrationService.class);
 
-        GCMService.putExtra("senderID", senderID);
+        GCMService.putExtra("senderID", gcmSenderId);
         mReactContext.startService(GCMService);
     }
 
